@@ -17,6 +17,7 @@ void forward(){
     digitalWrite(LM2,0);
     digitalWrite(RM1,1);
     digitalWrite(RM2,0);
+    Serial.println("Forward");
 }
 
 void backward(){
@@ -24,6 +25,7 @@ void backward(){
     digitalWrite(LM2,1);
     digitalWrite(RM1,0);
     digitalWrite(RM2,1);
+    Serial.println("Backward");
 }
 
 void loop(){
