@@ -1,3 +1,5 @@
+// to check sensor reading
+
 #define Left 9      // left sensor
 #define Right 10    // right sensor
 #define Forward 8   //front sensor

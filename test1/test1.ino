@@ -1,3 +1,4 @@
+// to check car movement.
 #define LM1 2       // left motor
 #define LM2 7       // left motor
 #define RM1 4       // right motor
