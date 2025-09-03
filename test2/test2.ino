@@ -1,8 +1,8 @@
 // to check sensor reading
 
-#define Left 9      // left sensor
-#define Right 10    // right sensor
-#define Forward 8   //front sensor
+#define Left 3      // left sensor
+#define Right 4    // right sensor
+#define Forward 5   //front sensor
 
 void setup(){
     pinMode(Left,INPUT);

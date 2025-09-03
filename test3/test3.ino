@@ -1,165 +1,91 @@
-// final check code
+#define Left 3      // left sensor
+#define Right 4     // right sensor
+#define Forward 5   // front sensor
 
-#include <Servo.h>  //include servo.h library
-
-Servo myservo;
-
-int pos = 0;
-
-int motor_speed = 70;  
-
-boolean fire = false;
-
-#define Left 9      // left sensor
-
-#define Right 10    // right sensor
-
-#define Forward 8   //front sensor
-
-#define LM1 2       // left motor
-
-#define LM2 7       // left motor
-
-#define RM1 4       // right motor
-
-#define RM2 12       // right motor
-
-#define pump 6
-
-#define en1 3
-#define en2 5
+#define LM1 6       // left motor input 1
+#define LM2 7       // left motor input 2
+#define RM1 8       // right motor input 1
+#define RM2 9       // right motor input 2
 
 void setup() {
-
   pinMode(Left, INPUT);
-
   pinMode(Right, INPUT);
-
   pinMode(Forward, INPUT);
-
   pinMode(LM1, OUTPUT);
-
   pinMode(LM2, OUTPUT);
-
   pinMode(RM1, OUTPUT);
-
   pinMode(RM2, OUTPUT);
-
-  pinMode(pump, OUTPUT);
-
-  pinMode(en1, OUTPUT);
-  pinMode(en2, OUTPUT);
-
-//    making enable on
-    digitalWrite(en1,1);
-    digitalWrite(en2,1);
-
-  myservo.attach(11);
-
-  myservo.write(90);
-
+  Serial.begin(9600);
 }
 
-void put_off_fire() {
+// --- Motor movement functions ---
+void forward() {
+  digitalWrite(LM1, HIGH);
+  digitalWrite(LM2, LOW);
+  digitalWrite(RM1, HIGH);
+  digitalWrite(RM2, LOW);
+  Serial.println("Forward");
+}
 
-    delay (500);  
+void backward() {
+  digitalWrite(LM1, LOW);
+  digitalWrite(LM2, HIGH);
+  digitalWrite(RM1, LOW);
+  digitalWrite(RM2, HIGH);
+  Serial.println("Backward");
+}
 
-    digitalWrite(LM1, HIGH);
+void left_turn() {
+  digitalWrite(LM1, LOW);
+  digitalWrite(LM2, HIGH);
+  digitalWrite(RM1, HIGH);
+  digitalWrite(RM2, LOW);
+  Serial.println("Left Turn");
+}
 
-    digitalWrite(LM2, HIGH);
+void right_turn() {
+  digitalWrite(LM1, HIGH);
+  digitalWrite(LM2, LOW);
+  digitalWrite(RM1, LOW);
+  digitalWrite(RM2, HIGH);
+  Serial.println("Right Turn");
+}
 
-    digitalWrite(RM1, HIGH);
-
-    digitalWrite(RM2, HIGH);
-
-   digitalWrite(pump, HIGH);
-
-   delay(500);
-
-    for (pos = 50; pos <= 130; pos += 1) {
-
-    myservo.write(pos);
-
-    delay(10);  
-
-  }
-
-  for (pos = 130; pos >= 50; pos -= 1) {
-
-    myservo.write(pos);
-
-    delay(10);
-
-  }
-
-  digitalWrite(pump,LOW);
-
-  myservo.write(90);
-
-  fire=false;
-
-} 
+void stop_robot() {
+  digitalWrite(LM1, LOW);
+  digitalWrite(LM2, LOW);
+  digitalWrite(RM1, LOW);
+  digitalWrite(RM2, LOW);
+  Serial.println("Stop");
+}
 
 void loop() {
+  int lf = digitalRead(Left);
+  int rf = digitalRead(Right);
+  int ff = digitalRead(Forward);
 
-   myservo.write(90); //Sweep_Servo();  
+  Serial.print("Left = ");
+  Serial.println(lf);
+  Serial.print("Right = ");
+  Serial.println(rf);
+  Serial.print("Forward = ");
+  Serial.println(ff);
+  delay(100);
 
-    if (digitalRead(Left) ==1 && digitalRead(Right)==1 && digitalRead(Forward) ==1) {   
-
-    digitalWrite(LM1, HIGH);
-
-    digitalWrite(LM2, HIGH);
-
-    digitalWrite(RM1, HIGH);
-
-    digitalWrite(RM2, HIGH);
-
-    }  
-
-    else if (digitalRead(Forward) ==0) {
-
-    digitalWrite(LM1, HIGH);
-
-    digitalWrite(LM2, LOW);
-
-    digitalWrite(RM1, HIGH);
-
-    digitalWrite(RM2, LOW);
-
-    fire = true;
-
-    }   
-
-    else if (digitalRead(Left) ==0) {
-
-    digitalWrite(LM1, HIGH);
-
-    digitalWrite(LM2, LOW);
-
-    digitalWrite(RM1, HIGH);
-
-    digitalWrite(RM2, HIGH);
-
-    }
-
-    else if (digitalRead(Right) ==0) {
-
-    digitalWrite(LM1, HIGH);
-
-    digitalWrite(LM2, HIGH);
-
-    digitalWrite(RM1, HIGH);
-
-    digitalWrite(RM2, LOW);
-
-}
-
-delay(300);//change this value to increase the distance  
-
-     while (fire == true) {
-
-      put_off_fire();
-
-     }
-
+  // --- Logic ---
+  if (!lf) {          // left sensor detects obstacle/fire
+    Serial.println("Left fire");
+    left_turn();
+  }
+  else if (!rf) {     // right sensor detects obstacle/fire
+    Serial.println("Right fire");
+    right_turn();
+  }
+  else if (!ff) {     // forward sensor detects obstacle/fire
+    Serial.println("Forward fire");
+    backward();
+  }
+  else {
+    forward();        // nothing detected, keep moving forward
+  }
 }
